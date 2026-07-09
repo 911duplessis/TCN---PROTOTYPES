@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #060d1c; font-family: 'Manrope', sans-serif; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.3); border-radius: 8px; }
+    input { font-family: 'Manrope', sans-serif; }
+    @keyframes tcnPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+  </style>
+</helmet>
+
+<div style="width:100%;height:100vh;min-height:780px;background:linear-gradient(160deg,#060d1c 0%,#0a1730 55%,#0a1428 100%);color:#f7f5ef;display:flex;flex-direction:column;overflow:hidden;" data-screen-label="TCN Referral Engine">
+
+  <!-- TOP BAR -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 32px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <svg width="28" height="28" viewBox="0 0 100 100"><g fill="none" stroke="{{ accent }}" strokeWidth="6"><line x1="50" y1="18" x2="22" y2="74"></line><line x1="50" y1="18" x2="78" y2="74"></line><line x1="22" y1="74" x2="78" y2="74"></line></g><circle cx="50" cy="18" r="9" fill="{{ accentLight }}"></circle><circle cx="22" cy="74" r="9" fill="{{ accent }}"></circle><circle cx="78" cy="74" r="9" fill="{{ accent }}"></circle></svg>
+      <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;letter-spacing:1.5px;">TCN <span style="color:rgba(247,245,239,0.4);font-weight:500;letter-spacing:0.3px;">Referral Engine</span></div>
+    </div>
+    <div style="display:flex;gap:4px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:4px;">
+      <sc-for list="{{ roleTabs }}" as="tab" hint-placeholder-count="4">
+        <div id="{{ tab.id }}" onClick="{{ tab.onClick }}" style="padding:9px 16px;border-radius:9px;cursor:pointer;font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;background:{{ tab.bg }};color:{{ tab.color }};">{{ tab.label }}</div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="flex:1;overflow:auto;padding:36px 40px;display:flex;flex-direction:column;align-items:center;">
+
+    <!-- ================= CONNECTOR ================= -->
+    <sc-if value="{{ roleConnector }}" hint-placeholder-val="{{ true }}">
+      <div style="width:100%;max-width:460px;">
+
+        <sc-if value="{{ cHome }}" hint-placeholder-val="{{ true }}">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:600;">Good morning, Stiaan</div>
+          <div style="font-family:'Manrope',sans-serif;font-size:14px;color:rgba(247,245,239,0.55);margin:6px 0 22px;">Your Network Activity</div>
+
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-family:'Manrope',sans-serif;font-size:14px;color:rgba(247,245,239,0.7);">New opportunities nearby</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:{{ accentLight }};">+3</div>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:20px;margin-bottom:22px;">
+            <div style="font-family:'Manrope',sans-serif;font-size:12px;letter-spacing:1px;color:{{ accentLight }};margin-bottom:8px;">OPPORTUNITY SPOTTED</div>
+            <div style="font-family:'Manrope',sans-serif;font-size:15px;line-height:1.5;">{{ draftName }} needs {{ draftNeedLower }} in {{ draftLocation }}.</div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div id="btn-refer" onClick="{{ openWizard }}" style="text-align:center;padding:14px;border-radius:12px;background:{{ accent }};color:#0a1428;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">Refer Someone</div>
+            <div onClick="{{ goFindVendor }}" style="text-align:center;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">Find Vendor</div>
+            <div onClick="{{ openTracking }}" style="text-align:center;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">Track Rewards</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ cWizard }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:600;margin-bottom:22px;">Referral Wizard</div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:16px;">
+            <div>
+              <div style="font-size:12px;color:rgba(247,245,239,0.5);margin-bottom:6px;">WHO NEEDS HELP?</div>
+              <input value="{{ draftName }}" onChange="{{ onNameChange }}" style="width:100%;box-sizing:border-box;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:#f7f5ef;font-size:15px;"></input>
+            </div>
+            <div>
+              <div style="font-size:12px;color:rgba(247,245,239,0.5);margin-bottom:6px;">SERVICE NEEDED</div>
+              <input value="{{ draftNeed }}" onChange="{{ onNeedChange }}" style="width:100%;box-sizing:border-box;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:#f7f5ef;font-size:15px;"></input>
+            </div>
+            <div>
+              <div style="font-size:12px;color:rgba(247,245,239,0.5);margin-bottom:6px;">LOCATION</div>
+              <input value="{{ draftLocation }}" onChange="{{ onLocationChange }}" style="width:100%;box-sizing:border-box;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:#f7f5ef;font-size:15px;"></input>
+            </div>
+            <div id="btn-send-referral" onClick="{{ sendReferral }}" style="text-align:center;margin-top:6px;padding:14px;border-radius:12px;background:{{ accent }};color:#0a1428;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">Send Referral</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ cTracking }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:600;margin-bottom:6px;">Connection Status</div>
+          <div style="font-family:'Manrope',sans-serif;font-size:14px;color:rgba(247,245,239,0.55);margin-bottom:22px;">{{ draftName }} · {{ draftNeed }}</div>
+
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:22px;">
+            <sc-for list="{{ pipelineSteps }}" as="step" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+                <span style="font-size:17px;color:{{ step.color }};width:20px;">{{ step.mark }}</span>
+                <span style="font-family:'Manrope',sans-serif;font-size:14px;color:{{ step.textColor }};">{{ step.label }}</span>
+              </div>
+            </sc-for>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding:18px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(212,175,55,0.03));border:1px solid {{ accentDim }};">
+              <div>
+                <div style="font-family:'Manrope',sans-serif;font-size:12px;color:rgba(247,245,239,0.55);">POTENTIAL REWARD</div>
+                <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:24px;color:{{ accentLight }};margin-top:4px;">{{ rewardDisplay }}</div>
+              </div>
+              <div style="font-family:'Manrope',sans-serif;font-size:12px;color:rgba(247,245,239,0.45);text-align:right;">{{ stageLabel }}</div>
+            </div>
+          </div>
+
+          <sc-if value="{{ isCompleted }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ resetDemo }}" style="margin-top:16px;text-align:center;padding:13px;border-radius:12px;border:1px solid {{ accentDim }};color:{{ accentLight }};font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Start New Referral</div>
+          </sc-if>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ================= CUSTOMER ================= -->
+    <sc-if value="{{ roleCustomer }}" hint-placeholder-val="{{ false }}">
+      <div style="width:100%;max-width:400px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:600;margin-bottom:22px;">{{ draftName }}’s Messages</div>
+        <div style="background:#0d1b2e;border:1px solid rgba(255,255,255,0.08);border-radius:22px;overflow:hidden;">
+          <div style="display:flex;align-items:center;gap:10px;padding:16px 18px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.06);">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,{{ accent }},{{ accentDim }});"></div>
+            <div style="font-family:'Manrope',sans-serif;font-weight:700;font-size:14px;">Stiaan (Connector)</div>
+          </div>
+          <div style="padding:20px 18px;display:flex;flex-direction:column;gap:12px;min-height:220px;">
+            <sc-if value="{{ showRecommendation }}" hint-placeholder-val="{{ false }}">
+              <div style="align-self:flex-start;max-width:85%;background:rgba(255,255,255,0.06);padding:12px 14px;border-radius:14px 14px 14px 2px;font-family:'Manrope',sans-serif;font-size:14px;line-height:1.4;">Hi {{ draftName }}, I know a trusted vendor for your {{ draftNeedLower }}. Can I connect you?</div>
+            </sc-if>
+            <sc-if value="{{ showCustomerAccepted }}" hint-placeholder-val="{{ false }}">
+              <div style="align-self:flex-end;max-width:85%;background:{{ accentDim }};color:#0a1428;padding:12px 14px;border-radius:14px 14px 2px 14px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;">Yes, please connect me!</div>
+            </sc-if>
+            <sc-if value="{{ showMatchingNotice }}" hint-placeholder-val="{{ false }}">
+              <div style="align-self:flex-start;max-width:85%;background:rgba(255,255,255,0.06);padding:12px 14px;border-radius:14px 14px 14px 2px;font-family:'Manrope',sans-serif;font-size:13px;color:rgba(247,245,239,0.6);font-style:italic;">TCN is matching you with a verified vendor…</div>
+            </sc-if>
+            <sc-if value="{{ showVendorFound }}" hint-placeholder-val="{{ false }}">
+              <div style="align-self:flex-start;max-width:85%;background:rgba(255,255,255,0.06);padding:12px 14px;border-radius:14px 14px 14px 2px;font-family:'Manrope',sans-serif;font-size:14px;">Great news — {{ vendorName }} accepted your request and will be in touch shortly.</div>
+            </sc-if>
+            <sc-if value="{{ showContacted }}" hint-placeholder-val="{{ false }}">
+              <div style="align-self:flex-start;max-width:85%;background:{{ accentDim }};color:#0a1428;padding:12px 14px;border-radius:14px 14px 14px 2px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;">{{ vendorName }} has contacted you directly.</div>
+            </sc-if>
+            <sc-if value="{{ showJobDone }}" hint-placeholder-val="{{ false }}">
+              <div style="align-self:flex-start;max-width:85%;background:{{ accent }};color:#0a1428;padding:12px 14px;border-radius:14px 14px 14px 2px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;">Job completed! Thanks for using TCN.</div>
+            </sc-if>
+          </div>
+          <sc-if value="{{ showAcceptConnectionBtn }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:14px 18px 20px;border-top:1px solid rgba(255,255,255,0.06);">
+              <div id="btn-accept-connection" onClick="{{ customerAccept }}" style="text-align:center;padding:12px;border-radius:12px;background:{{ accent }};color:#0a1428;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Accept Connection</div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ================= VENDOR ================= -->
+    <sc-if value="{{ roleVendor }}" hint-placeholder-val="{{ false }}">
+      <div style="width:100%;max-width:440px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:600;margin-bottom:4px;">{{ vendorName }}</div>
+        <div style="font-family:'Manrope',sans-serif;font-size:14px;color:rgba(247,245,239,0.55);margin-bottom:22px;">Vendor CRM</div>
+
+        <sc-if value="{{ vendorEmpty }}" hint-placeholder-val="{{ true }}">
+          <div style="background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.15);border-radius:18px;padding:40px 20px;text-align:center;font-family:'Manrope',sans-serif;font-size:14px;color:rgba(247,245,239,0.45);">No active leads yet. TCN’s engine will notify you the moment a customer is matched.</div>
+        </sc-if>
+
+        <sc-if value="{{ vendorMatching }}" hint-placeholder-val="{{ false }}">
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px;">
+            <div style="font-family:'Manrope',sans-serif;font-size:13px;color:{{ accentLight }};letter-spacing:1px;margin-bottom:16px;animation:tcnPulse 1.4s ease-in-out infinite;">AI MATCHING IN PROGRESS</div>
+            <sc-for list="{{ matchChecklist }}" as="line" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:10px;padding:8px 0;opacity:{{ line.on }};font-family:'Manrope',sans-serif;font-size:14px;">
+                <span style="color:{{ accentLight }};width:16px;">✓</span><span>{{ line.text }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ vendorLeadCard }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#0d1b2e;border:1px solid {{ accentDim }};border-radius:18px;padding:20px;">
+            <div style="font-family:'Manrope',sans-serif;font-size:14px;line-height:1.5;margin-bottom:16px;">TCN: Hi {{ vendorName }} 👋 You have received a new connection.</div>
+            <div style="display:flex;gap:24px;margin-bottom:18px;">
+              <div><div style="font-size:11px;color:rgba(247,245,239,0.5);">CUSTOMER</div><div style="font-family:'Manrope',sans-serif;font-weight:700;font-size:14px;margin-top:3px;">{{ draftName }}</div></div>
+              <div><div style="font-size:11px;color:rgba(247,245,239,0.5);">SERVICE</div><div style="font-family:'Manrope',sans-serif;font-weight:700;font-size:14px;margin-top:3px;">{{ draftNeed }}</div></div>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <div id="btn-vendor-accept" onClick="{{ vendorAccept }}" style="flex:1;text-align:center;padding:12px;border-radius:12px;background:{{ accent }};color:#0a1428;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Accept</div>
+              <div onClick="{{ vendorDecline }}" style="flex:1;text-align:center;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);color:rgba(247,245,239,0.7);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Decline</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ vendorPipelineCard }}" hint-placeholder-val="{{ false }}">
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:22px;">
+            <div style="font-family:'Manrope',sans-serif;font-size:13px;color:rgba(247,245,239,0.5);margin-bottom:14px;">{{ draftName }} · {{ draftNeed }}</div>
+            <sc-for list="{{ pipelineSteps }}" as="step" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+                <span style="font-size:16px;color:{{ step.color }};width:20px;">{{ step.mark }}</span>
+                <span style="font-family:'Manrope',sans-serif;font-size:14px;color:{{ step.textColor }};">{{ step.label }}</span>
+              </div>
+            </sc-for>
+            <sc-if value="{{ showMarkContacted }}" hint-placeholder-val="{{ false }}">
+              <div id="btn-mark-contacted" onClick="{{ vendorMarkContacted }}" style="margin-top:18px;text-align:center;padding:13px;border-radius:12px;background:{{ accent }};color:#0a1428;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Mark Customer Contacted</div>
+            </sc-if>
+            <sc-if value="{{ showMarkCompleted }}" hint-placeholder-val="{{ false }}">
+              <div id="btn-mark-completed" onClick="{{ vendorMarkCompleted }}" style="margin-top:18px;text-align:center;padding:13px;border-radius:12px;background:{{ accent }};color:#0a1428;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Mark Sale Completed</div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ================= ADMIN ================= -->
+    <sc-if value="{{ roleAdmin }}" hint-placeholder-val="{{ false }}">
+      <div style="width:100%;max-width:640px;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:600;margin-bottom:4px;">TCN Engine</div>
+        <div style="font-family:'Manrope',sans-serif;font-size:14px;color:rgba(247,245,239,0.55);margin-bottom:22px;">Automated matching, tracking &amp; rewards.</div>
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;">
+          <sc-for list="{{ adminStats }}" as="stat" hint-placeholder-count="4">
+            <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px 12px;text-align:center;">
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;color:{{ accentLight }};">{{ stat.value }}</div>
+              <div style="font-family:'Manrope',sans-serif;font-size:11px;color:rgba(247,245,239,0.55);margin-top:5px;">{{ stat.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px;font-family:'Manrope',sans-serif;">
+          <div style="font-size:12px;letter-spacing:1px;color:rgba(247,245,239,0.45);margin-bottom:12px;">ENGINE LOG</div>
+          <sc-for list="{{ logEntries }}" as="entry" hint-placeholder-count="3">
+            <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;color:rgba(247,245,239,0.75);">
+              <span style="color:{{ accentLight }};">●</span><span>{{ entry }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: {&quot;width&quot;: 1400, &quot;height&quot;: 900},
+  &quot;accentTheme&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;gold&quot;, &quot;options&quot;: [&quot;gold&quot;, &quot;blue&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Style&quot;},
+  &quot;serviceCategory&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;Landscaping&quot;, &quot;options&quot;: [&quot;Landscaping&quot;, &quot;Electrical&quot;, &quot;Roofing&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Behavior&quot;},
+  &quot;autoPlayDemo&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Behavior&quot;}
+}">
+const CATEGORY_DATA = {
+  Landscaping: { name: 'Sarah', need: 'Artificial Grass Installation', location: 'Pretoria East', vendors: ['PrimeTurf', 'GreenView Landscaping', 'TurfMasters SA'] },
+  Electrical: { name: 'Michael', need: 'Electrical Rewiring', location: 'Sandton', vendors: ['BluePeak Electrical', 'VoltWorks', 'CircuitPro'] },
+  Roofing: { name: 'Naledi', need: 'Roof Leak Repair', location: 'Centurion', vendors: ['NorthRidge Roofing', 'ApexRoof Co', 'SafeTop Roofing'] },
+};
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const cat = CATEGORY_DATA[props.serviceCategory] || CATEGORY_DATA.Landscaping;
+    this.state = {
+      role: 'connector',
+      connectorView: 'home',
+      draftName: cat.name,
+      draftNeed: cat.need,
+      draftLocation: cat.location,
+      stage: 'idle',
+      vendorIdx: 0,
+      matchReveal: 0,
+      logEntries: ['Engine idle — awaiting new referral.'],
+    };
+  }
+
+  componentDidMount() {
+    this._autoTimer = setInterval(() => {
+      if (!this.props.autoPlayDemo) return;
+      const s = this.state.stage;
+      if (s === 'idle') this.sendReferral();
+      else if (s === 'referred') this.customerAccept();
+      else if (s === 'matched') this.vendorAccept();
+      else if (s === 'vendor_accepted') this.vendorMarkContacted();
+      else if (s === 'customer_contacted') this.vendorMarkCompleted();
+      else if (s === 'completed') this.resetDemo();
+    }, 1900);
+  }
+  componentWillUnmount() {
+    clearInterval(this._autoTimer);
+    clearInterval(this._matchTimer);
+    clearTimeout(this._matchDoneTimer);
+  }
+
+  pushLog(text) {
+    this.setState(s => ({ logEntries: [text, ...s.logEntries].slice(0, 8) }));
+  }
+  vendorPool() {
+    const cat = CATEGORY_DATA[this.props.serviceCategory] || CATEGORY_DATA.Landscaping;
+    return cat.vendors;
+  }
+
+  setRole(role) { this.setState({ role }); }
+  openWizard() { this.setState({ role: 'connector', connectorView: 'wizard' }); }
+  openTracking() { this.setState({ role: 'connector', connectorView: 'tracking' }); }
+  goFindVendor() { this.setState({ role: 'vendor' }); }
+
+  onNameChange(e) { this.setState({ draftName: e.target.value }); }
+  onNeedChange(e) { this.setState({ draftNeed: e.target.value }); }
+  onLocationChange(e) { this.setState({ draftLocation: e.target.value }); }
+
+  sendReferral() {
+    if (this.state.stage !== 'idle') return;
+    this.setState({ stage: 'referred', connectorView: 'tracking', role: 'connector' });
+    this.pushLog(`Referral captured: ${this.state.draftName} — ${this.state.draftNeed}.`);
+  }
+
+  customerAccept() {
+    if (this.state.stage !== 'referred') return;
+    this.pushLog('Customer accepted the introduction.');
+    this.startMatching();
+  }
+
+  startMatching() {
+    clearInterval(this._matchTimer);
+    clearTimeout(this._matchDoneTimer);
+    this.setState({ stage: 'matching', matchReveal: 0 });
+    this.pushLog(`AI matching started for ${this.vendorPool()[this.state.vendorIdx % this.vendorPool().length]}…`);
+    this._matchTimer = setInterval(() => {
+      this.setState(s => {
+        const next = Math.min(4, s.matchReveal + 1);
+        if (next >= 4) {
+          clearInterval(this._matchTimer);
+          this._matchDoneTimer = setTimeout(() => this.setState({ stage: 'matched' }), 500);
+        }
+        return { matchReveal: next };
+      });
+    }, 650);
+  }
+
+  vendorAccept() {
+    if (this.state.stage !== 'matched') return;
+    this.setState({ stage: 'vendor_accepted' });
+    this.pushLog(`${this.vendorPool()[this.state.vendorIdx % this.vendorPool().length]} accepted the referral.`);
+  }
+  vendorDecline() {
+    if (this.state.stage !== 'matched') return;
+    this.pushLog(`${this.vendorPool()[this.state.vendorIdx % this.vendorPool().length]} declined — searching next vendor.`);
+    this.setState(s => ({ vendorIdx: s.vendorIdx + 1 }));
+    this.startMatching();
+  }
+  vendorMarkContacted() {
+    if (this.state.stage !== 'vendor_accepted') return;
+    this.setState({ stage: 'customer_contacted' });
+    this.pushLog('Vendor contacted the customer directly.');
+  }
+  vendorMarkCompleted() {
+    if (this.state.stage !== 'customer_contacted') return;
+    this.setState({ stage: 'completed' });
+    this.pushLog('Sale completed — reward calculated and paid to connector.');
+  }
+  resetDemo() {
+    const cat = CATEGORY_DATA[this.props.serviceCategory] || CATEGORY_DATA.Landscaping;
+    this.setState({
+      stage: 'idle', connectorView: 'home', vendorIdx: 0, matchReveal: 0,
+      draftName: cat.name, draftNeed: cat.need, draftLocation: cat.location,
+    });
+    this.pushLog('New referral cycle ready.');
+  }
+
+  renderVals() {
+    const accentTheme = this.props.accentTheme ?? 'gold';
+    const accent = accentTheme === 'blue' ? '#3d7bf5' : '#d4af37';
+    const accentLight = accentTheme === 'blue' ? '#8fb4ff' : '#f2d888';
+    const accentDim = accentTheme === 'blue' ? 'rgba(61,123,245,0.35)' : 'rgba(212,175,55,0.35)';
+
+    const { role, connectorView, stage, draftName, draftNeed, draftLocation, matchReveal } = this.state;
+    const pool = this.vendorPool();
+    const vendorName = pool[this.state.vendorIdx % pool.length];
+
+    const ROLE_DEFS = [
+      { key: 'connector', label: 'Connector' },
+      { key: 'customer', label: 'Customer' },
+      { key: 'vendor', label: 'Vendor' },
+      { key: 'admin', label: 'TCN Admin' },
+    ];
+    const roleTabs = ROLE_DEFS.map(r => ({
+      label: r.label, id: 'tab-' + r.key, onClick: () => this.setRole(r.key),
+      bg: r.key === role ? accent : 'transparent',
+      color: r.key === role ? '#0a1428' : 'rgba(247,245,239,0.65)',
+    }));
+
+    const stageOrder = ['idle', 'referred', 'matching', 'matched', 'vendor_accepted', 'customer_contacted', 'completed'];
+    const stageIdx = stageOrder.indexOf(stage);
+    const stageLabels = { idle: 'Not started', referred: 'Awaiting customer', matching: 'AI matching…', matched: 'Awaiting vendor', vendor_accepted: 'Vendor engaged', customer_contacted: 'In progress', completed: 'Completed' };
+
+    const pipelineDefs = [
+      { key: 'lead', label: 'Lead Created', doneAt: 1 },
+      { key: 'vendor', label: 'Vendor Accepted', doneAt: 4 },
+      { key: 'contacted', label: 'Customer Contacted', doneAt: 5 },
+      { key: 'sale', label: 'Sale Completed', doneAt: 6 },
+    ];
+    const pipelineSteps = pipelineDefs.map(p => {
+      const done = stageIdx >= p.doneAt;
+      return { label: p.label, mark: done ? '✓' : '⏳', color: done ? accentLight : 'rgba(247,245,239,0.3)', textColor: done ? '#f7f5ef' : 'rgba(247,245,239,0.45)' };
+    });
+
+    const rewardDisplay = stage === 'completed' ? 'R2,500' : 'Pending';
+
+    const matchLines = [
+      'Searching verified vendors…',
+      `${vendorName} matched`,
+      'Available in area',
+      'Rating verified',
+    ];
+
+    const adminStats = [
+      { label: 'Referral Status', value: stageLabels[stage] },
+      { label: 'Current Vendor', value: stage === 'idle' || stage === 'referred' ? '—' : vendorName },
+      { label: 'Decline Events', value: String(this.state.vendorIdx) },
+      { label: 'Reward Paid', value: stage === 'completed' ? 'R2,500' : 'R0' },
+    ];
+
+    return {
+      accent, accentLight, accentDim,
+      roleTabs,
+      roleConnector: role === 'connector', roleCustomer: role === 'customer', roleVendor: role === 'vendor', roleAdmin: role === 'admin',
+      cHome: connectorView === 'home' && role === 'connector',
+      cWizard: connectorView === 'wizard' && role === 'connector',
+      cTracking: connectorView === 'tracking' && role === 'connector',
+      openWizard: () => this.openWizard(), openTracking: () => this.openTracking(), goFindVendor: () => this.goFindVendor(),
+      draftName, draftNeed, draftLocation, draftNeedLower: draftNeed.toLowerCase(),
+      onNameChange: (e) => this.onNameChange(e), onNeedChange: (e) => this.onNeedChange(e), onLocationChange: (e) => this.onLocationChange(e),
+      sendReferral: () => this.sendReferral(),
+      pipelineSteps, rewardDisplay, stageLabel: stageLabels[stage], isCompleted: stage === 'completed', resetDemo: () => this.resetDemo(),
+
+      showRecommendation: stageIdx >= 1,
+      showAcceptConnectionBtn: stage === 'referred',
+      showCustomerAccepted: stageIdx >= 2,
+      showMatchingNotice: stage === 'matching',
+      showVendorFound: stageIdx >= 4,
+      showContacted: stageIdx >= 5,
+      showJobDone: stageIdx >= 6,
+      customerAccept: () => this.customerAccept(),
+
+      vendorName,
+      vendorEmpty: stageIdx <= 1,
+      vendorMatching: stage === 'matching',
+      matchChecklist: matchLines.map((line, i) => ({ text: line, on: i < matchReveal ? 1 : 0.25 })),
+      vendorLeadCard: stage === 'matched',
+      vendorPipelineCard: stageIdx >= 4,
+      vendorAccept: () => this.vendorAccept(), vendorDecline: () => this.vendorDecline(),
+      showMarkContacted: stage === 'vendor_accepted', showMarkCompleted: stage === 'customer_contacted',
+      vendorMarkContacted: () => this.vendorMarkContacted(), vendorMarkCompleted: () => this.vendorMarkCompleted(),
+
+      adminStats,
+      logEntries: this.state.logEntries,
+    };
+  }
+}
+
+</script>
+</body>
+</html>
